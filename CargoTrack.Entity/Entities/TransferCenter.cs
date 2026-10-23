@@ -20,5 +20,6 @@ namespace CargoTrack.Entity.Entities
         public ICollection<Branch> Branches { get; set; } = new List<Branch>();
 
 
+
     }
 }

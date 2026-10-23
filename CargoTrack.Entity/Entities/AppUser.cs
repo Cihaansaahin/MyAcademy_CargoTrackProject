@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace CargoTrack.Entity.Entities
@@ -11,5 +12,10 @@ namespace CargoTrack.Entity.Entities
         public string LastName { get; set; } = null!;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedDate { get; set; }
+
+        public Customer? Customer { get; set; }
+        public Employee? Employee { get; set; }
+
+
     }
 }

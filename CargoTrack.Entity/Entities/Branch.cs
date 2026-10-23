@@ -20,5 +20,7 @@ namespace CargoTrack.Entity.Entities
 
         public int TransferCenterId { get; set; }
         public TransferCenter TransferCenter { get; set; } = null!;
+
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }
