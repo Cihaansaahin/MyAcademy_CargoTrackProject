@@ -16,7 +16,9 @@ namespace CargoTrack.Entity.Entities
         public int CityId { get; set; }
         public City City { get; set; } = null!;
 
-        
+
+        public ICollection<Branch> Branches { get; set; } = new List<Branch>();
+
 
     }
 }
