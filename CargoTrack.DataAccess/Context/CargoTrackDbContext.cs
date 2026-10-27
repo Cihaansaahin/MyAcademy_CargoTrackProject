@@ -1,4 +1,5 @@
-﻿using CargoTrack.Entity.Entities;
+﻿using CargoTrack.Entity.Common;
+using CargoTrack.Entity.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -33,6 +34,15 @@ namespace CargoTrack.DataAccess.Context
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(typeof(CargoTrackDbContext).Assembly);
+
+            var ourForeignKeys = builder.Model.GetEntityTypes()
+                .Where(e => e.ClrType.Assembly == typeof(BaseEntity).Assembly)
+                .SelectMany(e => e.GetForeignKeys());
+
+            foreach (var foreignKey in ourForeignKeys)
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
         }
     }
 }
