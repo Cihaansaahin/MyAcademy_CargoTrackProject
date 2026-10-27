@@ -16,7 +16,7 @@ namespace CargoTrack.Entity.Entities
         //Ölçüler
         public decimal Weight { get; set; }
         public decimal Width { get; set; }
-        public decimal Lenght { get; set; }
+        public decimal Length { get; set; }
         public decimal Height { get; set; }
         public decimal Desi { get; set; }
         public decimal ChargeableWeight { get; set; }
@@ -67,5 +67,6 @@ namespace CargoTrack.Entity.Entities
         // 8) Teslimat sonucu
         public Delivery? Delivery { get; set; }
         public ICollection<DeliveryException> DeliveryExceptions { get; set; } = new List<DeliveryException>();
+        
     }
 }
