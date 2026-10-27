@@ -31,7 +31,7 @@ namespace CargoTrack.Entity.Entities
 
         // Teslimat kontrolu
         public string? DeliveryCode { get; set; }
-        public int FailedAttemptCount { get; set; }
+        
 
 
         // 5) Kimden kime
@@ -57,7 +57,15 @@ namespace CargoTrack.Entity.Entities
         public int? CurrentTransferCenterId { get; set; }
         public TransferCenter? CurrentTransferCenter { get; set; }
 
+
+
         // 7) Hareket geçmişi
         public ICollection<CargoMovement> Movements { get; set; } = new List<CargoMovement>();
+
+
+
+        // 8) Teslimat sonucu
+        public Delivery? Delivery { get; set; }
+        public ICollection<DeliveryException> DeliveryExceptions { get; set; } = new List<DeliveryException>();
     }
 }
