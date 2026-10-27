@@ -56,5 +56,8 @@ namespace CargoTrack.Entity.Entities
 
         public int? CurrentTransferCenterId { get; set; }
         public TransferCenter? CurrentTransferCenter { get; set; }
+
+        // 7) Hareket geçmişi
+        public ICollection<CargoMovement> Movements { get; set; } = new List<CargoMovement>();
     }
 }
