@@ -31,6 +31,8 @@ namespace CargoTrack.DataAccess.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(typeof(CargoTrackDbContext).Assembly);
         }
     }
 }
