@@ -13,6 +13,9 @@ builder.Services.AddBusinessLayer(connectionString);
 
 var app = builder.Build();
 
+await app.Services.InitializeBusinessLayerAsync(
+    includeDemoData: app.Environment.IsDevelopment());
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
