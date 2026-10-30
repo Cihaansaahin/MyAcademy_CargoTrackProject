@@ -1,4 +1,5 @@
-﻿using CargoTrack.Entity.Entities;
+﻿using CargoTrack.DataAccess.Seed;
+using CargoTrack.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -15,6 +16,8 @@ namespace CargoTrack.DataAccess.Configurations
 
             builder.HasIndex(x => x.Name).IsUnique();
             builder.HasIndex(x => x.PlateCode).IsUnique();
+
+            builder.HasData(CitySeedData.Cities);
         }
     }
 }
