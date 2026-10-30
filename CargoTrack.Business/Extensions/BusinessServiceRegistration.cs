@@ -12,4 +12,10 @@ public static class BusinessServiceRegistration
 
         return services;
     }
+
+    public static Task InitializeBusinessLayerAsync(
+    this IServiceProvider serviceProvider, bool includeDemoData)
+    {
+        return serviceProvider.SeedDataAccessAsync(includeDemoData);
+    }
 }

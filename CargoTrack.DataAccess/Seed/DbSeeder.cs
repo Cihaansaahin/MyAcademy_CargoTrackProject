@@ -10,11 +10,15 @@ namespace CargoTrack.DataAccess.Seed
 {
     public static class DbSeeder
     {
-        public static async Task SeedAsync(CargoTrackDbContext context)
+        public static async Task SeedAsync(CargoTrackDbContext context, bool includeDemoData)
         {
+            // Zorunlu: her ortamda
             await SeedExtraServiceFeesAsync(context);
             await SeedCargoPricesAsync(context);
-            await SeedTransferCentersAndBranchesAsync(context);
+
+            // Demo: sadece geliştirme ortamında
+            if (includeDemoData)
+                await SeedTransferCentersAndBranchesAsync(context);
 
             await context.SaveChangesAsync();
         }
