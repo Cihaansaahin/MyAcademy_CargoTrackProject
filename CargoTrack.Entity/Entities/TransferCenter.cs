@@ -9,7 +9,7 @@ namespace CargoTrack.Entity.Entities
     {
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
-        public string AdressLine { get; set; } = null!;
+        public string AddressLine { get; set; } = null!;
         public bool IsActive { get; set; } = true;
 
 
@@ -18,6 +18,6 @@ namespace CargoTrack.Entity.Entities
 
 
         public ICollection<Branch> Branches { get; set; } = new List<Branch>();
-        public object AddressLine { get; set; }
+        
     }
 }
