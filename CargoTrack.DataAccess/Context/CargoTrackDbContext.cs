@@ -60,5 +60,47 @@ namespace CargoTrack.DataAccess.Context
                 builder.Entity(entityType.ClrType).HasQueryFilter(lambda);
             }
         }
+           
+        
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            ApplyAuditFields();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(
+            bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            ApplyAuditFields();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void ApplyAuditFields()
+        {
+            var now = DateTime.Now;
+
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedDate = now;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedDate = now;
+                        entry.Property(x => x.CreatedDate).IsModified = false;
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.Entity.IsDeleted = true;
+                        entry.Entity.UpdatedDate = now;
+                        entry.Property(x => x.CreatedDate).IsModified = false;
+                        break;
+                }
+            }
+        }
     }
+    
 }

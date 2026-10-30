@@ -18,4 +18,4 @@ namespace CargoTrack.DataAccess.Configurations
                 .HasFilter("[IsDeleted] = 0");
         }
     }
-}
+} 
