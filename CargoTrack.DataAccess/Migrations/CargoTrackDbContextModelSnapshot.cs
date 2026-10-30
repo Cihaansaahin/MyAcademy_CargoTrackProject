@@ -345,7 +345,7 @@ namespace CargoTrack.DataAccess.Migrations
                     b.Property<DateTime>("EstimatedDeliveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ExtraService")
+                    b.Property<int>("ExtraServices")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Height")

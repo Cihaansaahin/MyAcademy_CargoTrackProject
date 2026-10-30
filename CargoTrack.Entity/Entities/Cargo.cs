@@ -24,7 +24,7 @@ namespace CargoTrack.Entity.Entities
 
         // Hizmet Ve Ücret
         public DeliveryType DeliveryType { get; set; }
-        public ExtraService ExtraService { get; set; }
+        public ExtraService ExtraServices { get; set; }
         public decimal Price{ get; set; }
         public DateTime EstimatedDeliveryDate{ get; set; }
 
