@@ -1,9 +1,11 @@
-﻿using CargoTrack.Entity.Common;
+﻿
+using CargoTrack.Entity.Common;
 using CargoTrack.Entity.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace CargoTrack.DataAccess.Context
@@ -42,6 +44,20 @@ namespace CargoTrack.DataAccess.Context
             foreach (var foreignKey in ourForeignKeys)
             {
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
+            // Soft delete te :  BaseEntity'den türeyen her tabloya "IsDeleted = 0" filtresi
+            var softDeletableTypes = builder.Model.GetEntityTypes()
+                .Where(e => typeof(BaseEntity).IsAssignableFrom(e.ClrType));
+
+            foreach (var entityType in softDeletableTypes)
+            {
+                var parameter = Expression.Parameter(entityType.ClrType, "x");
+                var isDeleted = Expression.Property(parameter, nameof(BaseEntity.IsDeleted));
+                var notDeleted = Expression.Not(isDeleted);
+                var lambda = Expression.Lambda(notDeleted, parameter);
+
+                builder.Entity(entityType.ClrType).HasQueryFilter(lambda);
             }
         }
     }
