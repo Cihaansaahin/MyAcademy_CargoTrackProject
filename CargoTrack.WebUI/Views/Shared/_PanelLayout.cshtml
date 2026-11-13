@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CargoTrack</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="bg-light">
+    <header>
+        <nav class="navbar navbar-expand navbar-light bg-white border-bottom px-3">
+            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">CargoTrack</a>
+            <span class="badge text-bg-secondary me-auto">@ViewContext.RouteData.Values["area"] Paneli</span>
+            <partial name="_LoginPartial" />
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-md-3 col-lg-2 bg-white border-end min-vh-100 py-3">
+                @* Her area kendi _PanelMenu'sunu verir: Areas/X/Views/Shared/_PanelMenu.cshtml *@
+                <partial name="_PanelMenu" />
+            </aside>
+
+            <main class="col-md-9 col-lg-10 p-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
