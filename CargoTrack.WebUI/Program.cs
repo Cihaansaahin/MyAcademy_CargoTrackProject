@@ -49,6 +49,12 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Area rotası default'tan ÖNCE: /Admin/Dashboard gibi adresler önce burada eşleşsin
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
