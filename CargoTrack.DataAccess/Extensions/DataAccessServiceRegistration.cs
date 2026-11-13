@@ -2,6 +2,8 @@
 using CargoTrack.DataAccess.Repositories.Abstract;
 using CargoTrack.DataAccess.Repositories.Concrete;
 using CargoTrack.DataAccess.Seed;
+using CargoTrack.Entity.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +19,26 @@ public static class DataAccessServiceRegistration
 
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                // Şifre kuralları
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+
+                // Kullanıcı kuralları
+                options.User.RequireUniqueEmail = true;
+
+                // Kilitleme: 5 yanlış denemede 5 dakika kilit
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.AllowedForNewUsers = true;
+            })
+            .AddEntityFrameworkStores<CargoTrackDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }
