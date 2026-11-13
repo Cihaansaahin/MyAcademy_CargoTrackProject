@@ -1,5 +1,6 @@
 using CargoTrack.Business.Services.Abstract;
 using CargoTrack.DTO.Auth;
+using CargoTrack.Entity.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +41,7 @@ public class AccountController : Controller
             return View(dto);
         }
 
-        return RedirectToLocal(dto.ReturnUrl);
+        return RedirectAfterLogin(dto.ReturnUrl, result.Roles);
     }
 
     [HttpGet]
@@ -68,7 +69,7 @@ public class AccountController : Controller
             return View(dto);
         }
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToPanel(result.Roles);
     }
 
     [HttpPost]
@@ -91,11 +92,27 @@ public class AccountController : Controller
             ModelState.AddModelError(string.Empty, error);
     }
 
-    // Open redirect koruması: sadece kendi sitemizin adreslerine dön
-    private IActionResult RedirectToLocal(string? returnUrl)
+    // Önce ReturnUrl (kullanıcı belirli bir sayfaya gitmek istiyordu), yoksa kendi paneli.
+    // Open redirect koruması: sadece kendi sitemizin adreslerine dön.
+    private IActionResult RedirectAfterLogin(string? returnUrl, IReadOnlyList<string> roles)
     {
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             return LocalRedirect(returnUrl);
+
+        return RedirectToPanel(roles);
+    }
+
+    // Birden fazla rolü olan kullanıcıda en yetkili rol kazanır
+    private IActionResult RedirectToPanel(IReadOnlyList<string> roles)
+    {
+        if (roles.Contains(RoleNames.Admin))
+            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+
+        if (roles.Contains(RoleNames.Manager))
+            return RedirectToAction("Index", "Dashboard", new { area = "Manager" });
+
+        if (roles.Contains(RoleNames.User))
+            return RedirectToAction("Index", "Dashboard", new { area = "User" });
 
         return RedirectToAction("Index", "Home");
     }

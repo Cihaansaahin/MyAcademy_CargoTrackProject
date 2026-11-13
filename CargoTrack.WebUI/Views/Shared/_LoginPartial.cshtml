@@ -1,6 +1,19 @@
+@using CargoTrack.Entity.Common
 @if (User.Identity?.IsAuthenticated == true)
 {
+    // Kullanıcının paneli: rolüne göre (en yetkili rol kazanır)
+    var panelArea = User.IsInRole(RoleNames.Admin) ? "Admin"
+                  : User.IsInRole(RoleNames.Manager) ? "Manager"
+                  : User.IsInRole(RoleNames.User) ? "User"
+                  : null;
+
     <ul class="navbar-nav">
+        @if (panelArea is not null)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark fw-semibold" asp-area="@panelArea" asp-controller="Dashboard" asp-action="Index">Panelim</a>
+            </li>
+        }
         <li class="nav-item">
             <span class="nav-link text-dark">@User.Identity.Name</span>
         </li>

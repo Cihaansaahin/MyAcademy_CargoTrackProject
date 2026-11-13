@@ -51,7 +51,8 @@ public class AuthService : IAuthService
 
         // Her şey tamam: cookie'yi (bilekliği) ver
         await _signInManager.SignInAsync(user, isPersistent: dto.RememberMe);
-        return AuthResult.Success();
+        var roles = await _userManager.GetRolesAsync(user);
+        return AuthResult.Success(roles.ToArray());
     }
 
     public async Task<AuthResult> RegisterAsync(RegisterDto dto)
@@ -108,7 +109,7 @@ public class AuthService : IAuthService
 
         // Kayıt olan kullanıcı tekrar login ekranıyla uğraşmasın
         await _signInManager.SignInAsync(user, isPersistent: false);
-        return AuthResult.Success();
+        return AuthResult.Success(RoleNames.User);
     }
 
     public Task LogoutAsync() => _signInManager.SignOutAsync();
