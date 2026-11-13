@@ -5,6 +5,7 @@ using CargoTrack.DataAccess.Seed;
 using CargoTrack.Entity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CargoTrack.DataAccess.Extensions;
@@ -49,6 +50,13 @@ public static class DataAccessServiceRegistration
         var context = scope.ServiceProvider.GetRequiredService<CargoTrackDbContext>();
 
         await DbSeeder.SeedAsync(context, includeDemoData);
+
+        // Roller ve admin her ortamda gerekli (demo verisi değil)
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        await IdentitySeeder.SeedAsync(roleManager, userManager, configuration);
     }
 
 
