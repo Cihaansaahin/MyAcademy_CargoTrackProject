@@ -1,4 +1,6 @@
-﻿using CargoTrack.DataAccess.Extensions;
+﻿using CargoTrack.Business.Services.Abstract;
+using CargoTrack.Business.Services.Concrete;
+using CargoTrack.DataAccess.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CargoTrack.Business.Extensions;
@@ -9,6 +11,8 @@ public static class BusinessServiceRegistration
         this IServiceCollection services, string connectionString)
     {
         services.AddDataAccessLayer(connectionString);
+
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }
