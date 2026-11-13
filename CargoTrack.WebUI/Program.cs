@@ -43,6 +43,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// Önce kimsin (cookie'yi oku), sonra ne yapabilirsin (rol kontrolü) — sıra önemli
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
