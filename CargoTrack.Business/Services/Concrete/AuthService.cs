@@ -1,5 +1,7 @@
 using CargoTrack.Business.Services.Abstract;
+using CargoTrack.DataAccess.Repositories.Abstract;
 using CargoTrack.DTO.Auth;
+using CargoTrack.Entity.Common;
 using CargoTrack.Entity.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,11 +14,19 @@ public class AuthService : IAuthService
 
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly IRepository<Customer> _customerRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+    public AuthService(
+        UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
+        IRepository<Customer> customerRepository,
+        IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _customerRepository = customerRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<AuthResult> LoginAsync(LoginDto dto)
@@ -41,6 +51,63 @@ public class AuthService : IAuthService
 
         // Her şey tamam: cookie'yi (bilekliği) ver
         await _signInManager.SignInAsync(user, isPersistent: dto.RememberMe);
+        return AuthResult.Success();
+    }
+
+    public async Task<AuthResult> RegisterAsync(RegisterDto dto)
+    {
+        var user = new AppUser
+        {
+            UserName = dto.Email,
+            Email = dto.Email,
+            FirstName = dto.FirstName.Trim(),
+            LastName = dto.LastName.Trim(),
+            PhoneNumber = dto.Phone,
+            IsActive = true,
+            CreatedDate = DateTime.Now
+        };
+
+        // 3 ayrı SaveChanges (kullanıcı, rol, müşteri) → tek paket: ya hep ya hiç
+        await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            var createResult = await _userManager.CreateAsync(user, dto.Password);
+            if (!createResult.Succeeded)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return AuthResult.Failure(createResult.Errors.Select(e => e.Description).ToArray());
+            }
+
+            // Rolü kullanıcı seçmez, sunucu verir (4.4a)
+            var roleResult = await _userManager.AddToRoleAsync(user, RoleNames.User);
+            if (!roleResult.Succeeded)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return AuthResult.Failure(roleResult.Errors.Select(e => e.Description).ToArray());
+            }
+
+            var customer = new Customer
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone = dto.Phone,
+                Email = dto.Email,
+                AppUserId = user.Id // CreateAsync sonrası Id dolu
+            };
+
+            await _customerRepository.AddAsync(customer);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _unitOfWork.CommitTransactionAsync();
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw; // beklenmeyen hata: yutma, yukarı fırlat
+        }
+
+        // Kayıt olan kullanıcı tekrar login ekranıyla uğraşmasın
+        await _signInManager.SignInAsync(user, isPersistent: false);
         return AuthResult.Success();
     }
 
