@@ -11,6 +11,22 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddBusinessLayer(connectionString);
 
+// Login cookie ayarları: yollar WebUI'ın bilgisi olduğu için burada
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";              // 401 → buraya
+    options.AccessDeniedPath = "/Account/AccessDenied"; // 403 → buraya
+    options.LogoutPath = "/Account/Logout";
+
+    options.Cookie.Name = "CargoTrack.Auth";
+    options.Cookie.HttpOnly = true;                          // JavaScript okuyamaz
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // sadece HTTPS
+    options.Cookie.SameSite = SameSiteMode.Lax;
+
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
+});
+
 var app = builder.Build();
 
 await app.Services.InitializeBusinessLayerAsync(
