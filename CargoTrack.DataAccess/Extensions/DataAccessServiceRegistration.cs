@@ -1,4 +1,6 @@
 ﻿using CargoTrack.DataAccess.Context;
+using CargoTrack.DataAccess.Repositories.Abstract;
+using CargoTrack.DataAccess.Repositories.Concrete;
 using CargoTrack.DataAccess.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,9 @@ public static class DataAccessServiceRegistration
     {
         services.AddDbContext<CargoTrackDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
